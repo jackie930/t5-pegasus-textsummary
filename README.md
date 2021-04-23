@@ -5,7 +5,7 @@
 利用提取的间隙句进行摘要概括的预训练模型（Pre-training with Extracted Gap-sentences for Abstractive Summarization）。就是设计一种间隙句生成的自监督预训练目标，来改进生成摘要的微调性能。
 本repo参考开源论坛对于中文版本的实现，以mT5为基础架构和初始权重，通过类似PEGASUS的方式进行预训练。
 
-![image](https://github.com/xxx/xxx/blob/master/xxx/xxx.png)
+![image](https://github.com/jackie930/t5-pegasus-textsummary/blob/main/1.png)
 
 ##预训练任务
 
