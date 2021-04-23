@@ -24,7 +24,7 @@
 
 ~~~shell script
 source activate tensorflow_p36
-pip install tensorflow==1.15 keras==2.3.1 bert4keras==0.10.0 jieba
+pip install tensorflow==1.15 keras==2.3.1 bert4keras==0.10.0 jieba tqdm rouge
 python finetune.py
 ~~~
 训练结束会产生一个keras结构的模型文件 - best_model.weights
@@ -38,6 +38,13 @@ best_model.weights
 ~~~shell script
 python test.py
 ~~~
+
+
+### 评估
+
+运行 `python evaluatiion.py`
+
+得到结果 `{'rouge-1': 0.885041123153444, 'rouge-2': 0.8795828353099052, 'rouge-l': 0.9046418758557804, 'bleu': 0.8239310846742561}`
 
 ### 部署
 
