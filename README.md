@@ -23,7 +23,8 @@
 ### train
 
 ~~~shell script
-pip install tensorflow==1.15 keras==2.3.1 bert4keras==0.10.0
+source activate tensorflow_p36
+pip install tensorflow==1.15 keras==2.3.1 bert4keras==0.10.0 jieba
 python finetune.py
 ~~~
 训练结束会产生一个keras结构的模型文件 - best_model.weights
