@@ -1,6 +1,7 @@
 # ARG REGISTRY_URI
 # FROM ${REGISTRY_URI}/pytorch-inference:1.5.0-cpu-py36-ubuntu16.04
-FROM tensorflow/tensorflow:1.15.2-gpu-py3
+# FROM tensorflow/tensorflow:1.15.0-gpu-py3
+FROM silverlogic/python3.6
 
 RUN mkdir -p /opt/ml/model
 
@@ -18,7 +19,8 @@ ENV PATH="/opt/program:${PATH}"
 ## install flask
 RUN pip install networkx==2.3 flask gevent gunicorn boto3 opencv-python==4.4.0.40 -i https://opentuna.cn/pypi/web/simple
 ## install dependencies
-RUN pip install keras==2.3.1 bert4keras==0.10.0 jieba tqdm rouge
+RUN pip install tensorflow-gpu==1.15.2 keras==2.3.1 bert4keras==0.10.0 jieba tqdm rouge
+RUN pip list
 
 ### Install nginx notebook
 RUN apt-get -y update && apt-get install -y --no-install-recommends \
