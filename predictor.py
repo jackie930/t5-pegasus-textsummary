@@ -9,21 +9,21 @@ import datetime
 from keras import backend as K
 import numpy as np
 import tensorflow as tf
-
-print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+# print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 import datetime
 from bert4keras.models import build_transformer_model
 from bert4keras.snippets import AutoRegressiveDecoder
 from bert4keras.tokenizers import Tokenizer
 import flask
 from tensorflow.python.client import device_lib
-
-print(device_lib.list_local_devices())
+# print(device_lib.list_local_devices())
 from keras import backend as K
 
 K.tensorflow_backend._get_available_gpus()
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+
+# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 
 class AutoTitle(AutoRegressiveDecoder):
