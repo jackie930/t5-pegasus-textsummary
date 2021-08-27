@@ -17,7 +17,7 @@ ENV PATH="/opt/program:${PATH}"
 # SageMaker requirements
 ##########################################################################################
 ## install flask
-RUN pip install networkx==2.3 flask gevent gunicorn boto3 opencv-python==4.4.0.40 -i https://opentuna.cn/pypi/web/simple
+RUN pip install networkx==2.3 flask gevent gunicorn boto3 -i https://opentuna.cn/pypi/web/simple
 ## install dependencies
 RUN pip install tensorflow-gpu==1.15.2 keras==2.3.1 bert4keras==0.10.0 jieba tqdm rouge
 RUN pip list

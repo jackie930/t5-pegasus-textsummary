@@ -102,6 +102,11 @@ def invoke_endpoint_textrank(data):
     # print ("<<<< result: ",''.join(result['res']['摘要列表']))
     return ''.join(result['res']['摘要列表'])
 
+def get_bertsum(result_pth, ):
+    result_pth, total
+    txt[0].replace('<q>', '').replace('\n', '')
+
+
 def evaluation(data, type):
     smooth = SmoothingFunction().method1
     best_bleu = 0.
@@ -111,6 +116,10 @@ def evaluation(data, type):
 
     if type == 'pegusas':
         autotitle = get_summary_pegusas()
+
+    if type == 'bertsum':
+        with open('/home/ec2-user/SageMaker/bertsum-chinese-LAI/results/MS_step30000.candidate', 'r') as save_pred:
+            bertsum_res = save_pred.readlines()
 
     title_ls = []
     pred_title_ls = []
@@ -128,6 +137,9 @@ def evaluation(data, type):
                                                      topk=1)).lower()
         elif type =='textrank':
             pred_title = invoke_endpoint_textrank(content)
+
+        elif type=='bertsum':
+            pred_title = bertsum_res[total].replace('<q>','').replace('\n','')
 
         print("content: ", content)
         print("title: ", title)
@@ -185,10 +197,12 @@ def evaluation(data, type):
 
 def main():
     data = load_data_customer('./customer.xlsx')
-    res = evaluation(data, 'pegusas')
-    print (res)
-    res = evaluation(data, 'textrank')
-    print (res)
+    #res = evaluation(data, 'pegusas')
+    #print (res)
+    #res = evaluation(data, 'textrank')
+    #print (res)
+    res = evaluation(data, 'bertsum')
+    print(res)
 
 
 if __name__ == '__main__':

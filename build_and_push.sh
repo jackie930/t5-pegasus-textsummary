@@ -63,6 +63,6 @@ $(aws ecr get-login --registry-ids ${registry_id} --region ${region} --no-includ
 # docker build -t ${image} -f Dockerfile . --build-arg REGISTRY_URI=${registry_uri}
 docker build -t ${image} -f Dockerfile . --build-arg REGION=${region}
 docker tag ${image} ${fullname}
-# docker push ${fullname}
+docker push ${fullname}
 
 #done
