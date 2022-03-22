@@ -84,10 +84,41 @@ result = json.loads(response["Body"].read())
 print (result)
 ```
 
-
 ## reference
 
 https://github.com/ZhuiyiTechnology/t5-pegasus 
 
 https://github.com/google-research/pegasus
+
+
+## 模型转换和加速
+### 环境配置
+~~~shell script
+cuda/cudnn/onnxruntime的版本需要对应才能使用gpu进行onnxrntime推理，详见https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html
+cuda 10.2
+cudnn 8.0.3
+pip install onnxruntime==1.5.1 onnxruntime-gpu==1.5.1 onnxruntime_tools onnxmltools sympy tf2onnx
+~~~
+
+### 模型转换
+* 支持tensorflow模型转换成onnx模型
+* 支持optmization操作和转换成float16模型，这是针对transformer-gpu结构的optmization工具，支持部分模型和部分框架，详见https://github.com/microsoft/onnxruntime/tree/master/onnxruntime/python/tools/transformers
+* 动态量化
+~~~shell script
+python tf_to_onnx.py
+~~~
+
+### 模型测试
+* 在进行测试之前，需要将bert4keras库中的snippets.py的466行做如下修改，删除466行，增加以下三行代码
+~~~shell script
+466 -  prediction = predict(self, inputs, output_ids, states)
+    +  prediction = predict(self, inputs, output_ids, states)[0]
+    +  if prediction.shape[0]>1:
+    +     prediction = np.expand_dims(prediction[-1],0)
+~~~
+* 修改代码中的providers支持GPU和CPU测试，GPU测试时providers=['CUDAExecutionProvider'],CPU测试时providers=['CPUExecutionProvider']
+~~~shell script
+python test_onnx.py
+~~~
+
 
