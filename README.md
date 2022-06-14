@@ -7,7 +7,7 @@
 
 ![image](https://github.com/jackie930/t5-pegasus-textsummary/blob/main/1.png)
 
-##预训练任务
+## 预训练任务
 
 预训练任务模仿了PEGASUS的摘要式预训练。具体来说，假设一个文档有n个句子，我们从中挑出大约n/4个句子（可以不连续），使得这n/4个句子拼起来的文本，跟剩下的3n/4个句子拼起来的文本，最长公共子序列尽可能长，然后我们将3n/4个句子拼起来的文本视为原文，n/4个句子拼起来的文本视为摘要，通过这样的方式构成一个“(原文, 摘要)”的伪摘要数据对。
 
@@ -84,41 +84,57 @@ result = json.loads(response["Body"].read())
 print (result)
 ```
 
+## 模型转换和加速
+### 环境配置
+
+~~~shell script
+# cuda/cudnn/onnxruntime的版本需要对应才能使用gpu进行onnxrntime推理，详见https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html
+# cuda 10.2
+# cudnn 8.0.3
+pip install onnxruntime==1.5.1 onnxruntime-gpu==1.5.1 onnxruntime_tools onnxmltools sympy tf2onnx
+~~~
+
+### 模型转换
+
+* 支持tensorflow模型转换成onnx模型
+* 支持optmization操作和转换成float16模型，这是针对transformer-gpu结构的optmization工具，支持部分模型和部分框架，详见https://github.com/microsoft/onnxruntime/tree/master/onnxruntime/python/tools/transformers
+* 动态量化
+
+~~~shell script
+python tf_to_onnx.py
+~~~
+
+### 模型测试
+
+在进行测试之前，需要将 bert4keras 库中的 snippets.py 做修改，删除 `prediction = predict(self, inputs, output_ids, states)` 所在行，并再增加三行代码：
+
+~~~shell script
+-  prediction = predict(self, inputs, output_ids, states)
++  prediction = predict(self, inputs, output_ids, states)[0]
++  if prediction.shape[0] > 1:
++      prediction = np.expand_dims(prediction[-1], 0)
+~~~
+
+或者在终端中直接执行以下代码以安装 [tzq0301](https://github.com/tzq0301) 修改后的 [bert4keras](https://github.com/tzq0301/bert4keras)：
+
+~~~shell script
+pip install git+https://github.com/tzq0301/bert4keras.git@tzq
+# pip install bert4keras
+~~~
+
+可以修改代码中的 providers 以支持 GPU 或 CPU 测试：
+
+* GPU 测试时，`providers=['CUDAExecutionProvider']`
+* CPU 测试时，`providers=['CPUExecutionProvider']`
+
+~~~shell script
+python test_onnx.py
+~~~
+
 ## reference
 
 https://github.com/ZhuiyiTechnology/t5-pegasus 
 
 https://github.com/google-research/pegasus
 
-
-## 模型转换和加速
-### 环境配置
-~~~shell script
-cuda/cudnn/onnxruntime的版本需要对应才能使用gpu进行onnxrntime推理，详见https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html
-cuda 10.2
-cudnn 8.0.3
-pip install onnxruntime==1.5.1 onnxruntime-gpu==1.5.1 onnxruntime_tools onnxmltools sympy tf2onnx
-~~~
-
-### 模型转换
-* 支持tensorflow模型转换成onnx模型
-* 支持optmization操作和转换成float16模型，这是针对transformer-gpu结构的optmization工具，支持部分模型和部分框架，详见https://github.com/microsoft/onnxruntime/tree/master/onnxruntime/python/tools/transformers
-* 动态量化
-~~~shell script
-python tf_to_onnx.py
-~~~
-
-### 模型测试
-* 在进行测试之前，需要将bert4keras库中的snippets.py的466行做如下修改，删除466行，增加以下三行代码
-~~~shell script
-466 -  prediction = predict(self, inputs, output_ids, states)
-    +  prediction = predict(self, inputs, output_ids, states)[0]
-    +  if prediction.shape[0]>1:
-    +     prediction = np.expand_dims(prediction[-1],0)
-~~~
-* 修改代码中的providers支持GPU和CPU测试，GPU测试时providers=['CUDAExecutionProvider'],CPU测试时providers=['CPUExecutionProvider']
-~~~shell script
-python test_onnx.py
-~~~
-
-
+https://github.com/bojone/bert4keras
